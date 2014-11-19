@@ -5,7 +5,7 @@ function nonComment(s) { return s[0] !== '#'; }
 function trim(s) { return s.replace(/^\s+|\s+$/g, ''); }
 
 function parseProperties(s) {
-  return s.split(/\n/)
+  return s.split(/\r\n/)
     .map(trim)
     .filter(nonEmptyString)
     .filter(nonComment)
@@ -38,19 +38,24 @@ function parse(configString) {
     return [];
 
   var s = trim(configString);
-  var hostLines = s.match(/Host\s.+?\n/g);
+  var hostLines = s.split(/\n\r\n/);
   var values = s
-    .split(/Host\s.+?\n/g)
+    .split(/^/)
     .map(trim)
     .filter(nonComment)
     .filter(nonEmptyString);
   var entries = [];
-
-  hostLines.forEach(function(hostLine, i) {
+  values.forEach(function(value, i) {
+	value = value.replace(/Host\s/g,",Host ");
+	values[i] = value;
+  });
+  values = values[0].split(/,/);
+  values.splice(0,1);
+  values.forEach(function(hostLine, i) {
     var entry = parseProperties(values[i]);
-    parseHosts(hostLine).forEach(function(host) {
-      entries.push(xtend({ Host: host }, entry));
-    });
+    //parseHosts(hostLine).forEach(function(host) {
+      entries.push(entry);
+    //});
   });
 
   var wildcards = entries.filter(wildcard);
