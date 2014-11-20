@@ -1,6 +1,6 @@
 {
   "name": "ssh-config-parser",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "an ssh-config parser",
   "main": "index.js",
   "scripts": {
